@@ -4,65 +4,53 @@
 
 {% block extra_css %}
 <style>
-.detail-wrapper { display: flex; gap: 30px; min-height: 500px; }
-
-/* 左侧目录 */
-.toc-sidebar { width: 200px; flex-shrink: 0; }
-.toc-sticky { position: sticky; top: 20px; height: calc(100vh - 40px); display: flex; flex-direction: column; }
-.toc-title { margin-bottom: 15px; color: var(--primary-color); font-size: 15px; font-weight: 600; flex-shrink: 0; }
-#toc { font-size: 12.5px; line-height: 1.4; overflow-y: auto; flex: 1; padding-right: 5px; }
-#toc::-webkit-scrollbar { width: 4px; }
-#toc::-webkit-scrollbar-track { background: transparent; }
-#toc::-webkit-scrollbar-thumb { background: rgba(123,63,0,.2); border-radius: 2px; }
-#toc::-webkit-scrollbar-thumb:hover { background: rgba(123,63,0,.3); }
-
-.toc-link { text-decoration: none !important; color: var(--text-color) !important; display: block; }
-.toc-link.toc-active { color: var(--primary-color) !important; background: var(--primary-light) !important; border-radius: 3px; padding: 1px 4px; margin: -1px -4px; }
-body.dark-mode #toc .toc-link { color: #ccc !important; }
-body.dark-mode #toc .toc-link.toc-active { color: #c4956a !important; background: #3a2a1a !important; }
-body.dark-mode #toc::-webkit-scrollbar-thumb { background: rgba(160,82,45,.3); }
-.toc-h1 { font-weight: bold !important; }
-
-/* 右侧内容 */
-.detail-main { flex: 1; max-width: 970px; }
-
-.archive-notice { background: var(--hover-bg); border-left: 4px solid var(--primary-color); padding: 10px 15px; margin-bottom: 20px; border-radius: 4px; color: var(--primary-color); }
-
-#blog-content { font-size: 16px; line-height: 1.7; margin-bottom: 40px; }
-#blog-content h1, #blog-content h2, #blog-content h3, #blog-content h4 { font-weight: 700; scroll-margin-top: 20px; }
-#blog-content h1 { font-size: 1.7em; margin: 28px 0 14px; padding-bottom: 8px; border-bottom: 2px solid var(--border-color); }
-#blog-content h2 { font-size: 1.45em; margin: 26px 0 14px; }
-#blog-content h3 { font-size: 1.25em; margin: 24px 0 12px; }
-#blog-content h4 { font-size: 1.05em; margin: 22px 0 12px; }
-#blog-content p { margin-bottom: 1.2em; font-size: 16px; line-height: 1.7; }
-#blog-content pre { background: #f6f8fa; border-radius: 6px; padding: 16px; overflow-x: auto; font-size: 14px; }
-#blog-content code { font-family: monospace; font-size: 14px; background: rgba(27,31,35,.05); border-radius: 3px; padding: .2em .4em; }
-#blog-content pre code { background: none; padding: 0; }
-#blog-content blockquote { margin: 0; padding: 0 1em; color: #6a737d; border-left: .25em solid #dfe2e5; }
-#blog-content ul, #blog-content ol { padding-left: 2em; margin-bottom: 1.2em; }
-#blog-content table { border-collapse: collapse; width: 100%; margin-bottom: 1.2em; }
-#blog-content th, #blog-content td { padding: 8px 12px; border: 1px solid #ddd; }
-#blog-content th { background: #f6f8fa; }
-#blog-content img { max-width: 100%; height: auto; border-radius: 4px; margin: 1em 0; }
-
-/* 暗黑模式 */
-body.dark-mode #blog-content pre { background: #2d2d2d; }
-body.dark-mode #blog-content code { background: rgba(255,255,255,.08); }
-body.dark-mode #blog-content pre code { background: none; }
-body.dark-mode #blog-content blockquote { color: #999; border-left-color: #555; }
-body.dark-mode #blog-content th { background: #333; }
-body.dark-mode #blog-content th, body.dark-mode #blog-content td { border-color: #444; }
-body.dark-mode #blog-content h1 { border-bottom-color: #444; }
-body.dark-mode .archive-notice { background: #2a2a2a; }
-
-/* 文章底部 */
-.detail-footer { padding-top: 20px; border-top: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; color: #6c757d; font-size: 13px; }
-.detail-footer a { color: var(--primary-color); text-decoration: none; margin-right: 15px; }
-.btn-del { background: none; border: none; color: #dc3545; cursor: pointer; padding: 0; font-size: 13px; }
-
-/* 滚动按钮 */
-.scroll-btns { position: fixed; bottom: 30px; right: 7px; display: flex; flex-direction: column; gap: 10px; z-index: 1000; }
-.scroll-btns button { width: 20px; height: 20px; border-radius: 50%; opacity: .2; background: #3f3e3d; color: #fff; border: none; cursor: pointer; font-size: 10px; line-height: 1; }
+.detail-wrapper{display:flex;gap:30px;min-height:500px}
+.toc-sidebar{width:200px;flex-shrink:0}
+.toc-sticky{position:sticky;top:20px;height:calc(100vh - 40px);display:flex;flex-direction:column}
+.toc-title{margin-bottom:15px;color:var(--primary-color);font-size:15px;font-weight:600;flex-shrink:0}
+#toc{font-size:12.5px;line-height:1.4;overflow-y:auto;flex:1;padding-right:5px}
+#toc::-webkit-scrollbar{width:4px}
+#toc::-webkit-scrollbar-track{background:transparent}
+#toc::-webkit-scrollbar-thumb{background:rgba(123,63,0,.2);border-radius:2px}
+#toc::-webkit-scrollbar-thumb:hover{background:rgba(123,63,0,.3)}
+.toc-link{text-decoration:none!important;color:var(--text-color)!important;display:block}
+.toc-link.toc-active{color:var(--primary-color)!important;background:var(--primary-light)!important;border-radius:3px;padding:1px 4px;margin:-1px -4px}
+body.dark-mode #toc .toc-link{color:#ccc!important}
+body.dark-mode #toc .toc-link.toc-active{color:#c4956a!important;background:#3a2a1a!important}
+body.dark-mode #toc::-webkit-scrollbar-thumb{background:rgba(160,82,45,.3)}
+.toc-h1{font-weight:bold!important}
+.detail-main{flex:1;max-width:970px}
+.archive-notice{background:var(--hover-bg);border-left:4px solid var(--primary-color);padding:10px 15px;margin-bottom:20px;border-radius:4px;color:var(--primary-color)}
+#blog-content{font-size:16px;line-height:1.7;margin-bottom:40px}
+#blog-content h1,#blog-content h2,#blog-content h3,#blog-content h4{font-weight:700;scroll-margin-top:20px}
+#blog-content h1{font-size:1.7em;margin:28px 0 14px;padding-bottom:8px;border-bottom:2px solid var(--border-color)}
+#blog-content h2{font-size:1.45em;margin:26px 0 14px}
+#blog-content h3{font-size:1.25em;margin:24px 0 12px}
+#blog-content h4{font-size:1.05em;margin:22px 0 12px}
+#blog-content p{margin-bottom:1.2em;font-size:16px;line-height:1.7}
+#blog-content pre{background:#f6f8fa;border-radius:6px;padding:16px;overflow-x:auto;font-size:14px}
+#blog-content code{font-family:monospace;font-size:14px;background:rgba(27,31,35,.05);border-radius:3px;padding:.2em .4em}
+#blog-content pre code{background:none;padding:0}
+#blog-content blockquote{margin:0;padding:0 1em;color:#6a737d;border-left:.25em solid #dfe2e5}
+#blog-content ul,#blog-content ol{padding-left:2em;margin-bottom:1.2em}
+#blog-content table{border-collapse:collapse;width:100%;margin-bottom:1.2em}
+#blog-content th,#blog-content td{padding:8px 12px;border:1px solid #ddd}
+#blog-content th{background:#f6f8fa}
+#blog-content img{max-width:100%;height:auto;border-radius:4px;margin:1em 0}
+body.dark-mode #blog-content pre{background:#2d2d2d}
+body.dark-mode #blog-content code{background:rgba(255,255,255,.08)}
+body.dark-mode #blog-content pre code{background:none}
+body.dark-mode #blog-content blockquote{color:#999;border-left-color:#555}
+body.dark-mode #blog-content th{background:#333}
+body.dark-mode #blog-content td,body.dark-mode #blog-content th{border-color:#444}
+body.dark-mode #blog-content h1{border-bottom-color:#444}
+body.dark-mode .archive-notice{background:#2a2a2a}
+.detail-footer{padding-top:20px;border-top:1px solid var(--border-color);display:flex;justify-content:space-between;align-items:center;color:#6c757d;font-size:13px}
+.detail-footer a{color:var(--primary-color);text-decoration:none;margin-right:15px}
+.btn-del{background:none;border:none;color:#dc3545;cursor:pointer;padding:0;font-size:13px}
+.scroll-btns{position:fixed;bottom:30px;right:7px;display:flex;flex-direction:column;gap:10px;z-index:1000}
+.scroll-btns button{width:20px;height:20px;border-radius:50%;opacity:.2;background:#3f3e3d;color:#fff;border:none;cursor:pointer;font-size:10px;line-height:1;transition:opacity .2s}
+.scroll-btns button:hover{opacity:.6}
 </style>
 {% endblock %}
 
@@ -101,55 +89,47 @@ body.dark-mode .archive-notice { background: #2a2a2a; }
 </div>
 
 <div class="scroll-btns">
-  <button onclick="scrollTo(0,0)">↑</button>
-  <button onclick="scrollTo(0,document.body.scrollHeight)">↓</button>
+  <button onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+  <button onclick="window.scrollTo({top:document.body.scrollHeight,behavior:'smooth'})">↓</button>
 </div>
 {% endblock %}
 
 {% block scripts %}
 <script>
-(() => {
-  const content = document.getElementById('blog-content');
-  const toc = document.getElementById('toc');
-  if (!content || !toc) return;
-
-  const headings = [...content.querySelectorAll('h1, h2, h3, h4')];
-  if (!headings.length) { toc.innerHTML = '<div style="color:#6c757d;padding:10px;font-size:12px"></div>'; return; }
-
-  toc.innerHTML = headings.map((h, i) => {
-    h.id = 'heading-' + i;
-    const level = +h.tagName[1];
-    const indent = (level - 1) * 12;
-    return `<div style="margin-left:${indent}px;margin-bottom:6px">
-      <a href="#${h.id}" class="toc-link ${level === 1 ? 'toc-h1' : ''}" data-level="${level}">${h.textContent}</a>
-    </div>`;
+(()=>{
+  const content=document.getElementById('blog-content'),toc=document.getElementById('toc');
+  if(!content||!toc)return;
+  
+  const headings=[...content.querySelectorAll('h1,h2,h3,h4')];
+  if(!headings.length){toc.innerHTML='';return}
+  
+  toc.innerHTML=headings.map((h,i)=>{
+    h.id='heading-'+i;
+    const indent=(+h.tagName[1]-1)*12;
+    return `<div style="margin-left:${indent}px;margin-bottom:6px"><a href="#${h.id}" class="toc-link${+h.tagName[1]===1?' toc-h1':''}">${h.textContent}</a></div>`
   }).join('');
-
-  toc.querySelectorAll('a').forEach(a => a.addEventListener('click', e => {
+  
+  toc.onclick=e=>{
+    const a=e.target.closest('.toc-link');
+    if(!a)return;
     e.preventDefault();
-    document.getElementById(a.getAttribute('href').slice(1))?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    history.pushState(null, null, a.getAttribute('href'));
-  }));
-
-  let timer;
-  const updateActive = () => {
-    const links = [...toc.querySelectorAll('.toc-link')];
-    let activeId = null, minDist = Infinity;
-    for (const h of headings) {
-      const rect = h.getBoundingClientRect();
-      if (rect.top <= 120 && rect.bottom >= 0) { activeId = h.id; break; }
-      const dist = Math.abs(rect.top - 80);
-      if (dist < minDist) { minDist = dist; activeId = h.id; }
-    }
-    links.forEach(a => {
-      a.classList.toggle('toc-active', a.getAttribute('href') === '#' + activeId);
-      if (!a.classList.contains('toc-h1')) a.style.fontWeight = a.classList.contains('toc-active') ? 'bold' : '';
-    });
+    document.querySelector(a.hash)?.scrollIntoView({behavior:'smooth',block:'start'});
+    history.pushState(null,null,a.hash);
   };
-  addEventListener('scroll', () => { clearTimeout(timer); timer = setTimeout(updateActive, 50); }, { passive: true });
-  setTimeout(updateActive, 200);
-
-  if (location.hash) setTimeout(() => document.getElementById(location.hash.slice(1))?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 300);
+  
+  const updateActive=()=>{
+    let activeId=null,min=Infinity;
+    for(const h of headings){
+      const {top,bottom}=h.getBoundingClientRect(),d=Math.abs(top-80);
+      if(top<=120&&bottom>=0){activeId=h.id;break}
+      if(d<min){min=d;activeId=h.id}
+    }
+    toc.querySelectorAll('.toc-link').forEach(a=>a.classList.toggle('toc-active',a.hash==='#'+activeId));
+  };
+  
+  let t;addEventListener('scroll',()=>{clearTimeout(t);t=setTimeout(updateActive,50)},{passive:true});
+  setTimeout(updateActive,200);
+  if(location.hash)setTimeout(()=>document.querySelector(location.hash)?.scrollIntoView({behavior:'smooth',block:'start'}),300);
 })();
 </script>
 {% endblock %}
