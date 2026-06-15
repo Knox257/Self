@@ -140,8 +140,6 @@ def tizhong():
     today = get_china_time()
     return render_template('tizhong.html', records_json=json.dumps(records_list, ensure_ascii=False), today=today, current_limit=limit)
 
-
-
 @app.route('/tizhong/data')
 def tizhong_data():
     """导出体重数据JSON"""
@@ -177,7 +175,6 @@ def tizhong_data():
         },
         'records': records_list
     })
-
 
 @app.route('/tizhong/get_detail')
 def get_weight_detail():
@@ -361,7 +358,8 @@ def qian():
     type_ = request.args.get('type')
     sort = request.args.get('sort', 'desc')
     keyword = request.args.get('keyword', '')
-    show_special = request.args.get('show_special', 'true')
+    show_special = request.args.get('show_special', 'false')
+    merge_food = request.args.get('merge_food', 'true')
     now = get_china_time()
     if year is None:
         year = now[:4]
@@ -392,6 +390,9 @@ def qian():
     for r in records:
         m = r['money']
         t = r['type']
+        # 合并模式：外食归类到饮食
+        if merge_food == 'true' and t == '外食':
+            t = '饮食'
         if m > 0:
             total_in += m
             if t not in income_categories:
@@ -441,7 +442,7 @@ def qian():
         grouped_records[y]['months'][m]['total'] += amt
         grouped_records[y]['total'] += amt
     conn.close()
-    return render_template('qian.html', grouped_records=grouped_records, available_years=years, available_months=months, available_types=types, current_year=year, current_month=month.zfill(2) if month else None, current_type=type_, sort_order=sort, keyword=keyword, now=now, total_income=total_in, total_expense=total_out, balance=total_in-total_out, income_categories=income_list, expense_categories=expense_list, show_special=show_special)
+    return render_template('qian.html', grouped_records=grouped_records, available_years=years, available_months=months, available_types=types, current_year=year, current_month=month.zfill(2) if month else None, current_type=type_, sort_order=sort, keyword=keyword, now=now, total_income=total_in, total_expense=total_out, balance=total_in-total_out, income_categories=income_list, expense_categories=expense_list, show_special=show_special, merge_food=merge_food)
 
 @app.route('/add_money_record', methods=['POST'])
 def add_money_record():
@@ -636,7 +637,6 @@ def photos_page():
     today = get_china_time()
     return render_template('tupian.html', photos=photos, today=today)
 
-
 @app.route('/tupian/upload', methods=['POST'])
 def photo_upload():
     try:
@@ -687,7 +687,6 @@ def photo_view(photo_id):
         return Response(row['data'], mimetype='image/jpeg')
     return '', 404
 
-
 @app.route('/backup')
 def manual_backup():
     try:
@@ -695,8 +694,6 @@ def manual_backup():
         return '备份成功'
     except Exception as e:
         return f'备份失败：{str(e)}'
-
-        
 
 # === 启动 ===
 if __name__ == '__main__':

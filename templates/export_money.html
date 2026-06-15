@@ -100,39 +100,87 @@ const genFilename = (f, total) => {
     return `记账_${p.length?p.join('_'):'全部数据'}_${total}条_${new Date().toISOString().slice(0,19).replace(/:/g,'-')}.json`;
 };
 
+// 格式化金额显示
+const formatMoney = (amount) => {
+    const num = Math.round(amount);
+    return num > 0 ? '+' + num : num;
+};
+
 async function exportData() {
     const f = getFilters();
     try {
-        const res = await fetch('/qian/export/filtered', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(f) });
+        const res = await fetch('/qian/export/filtered', { 
+            method:'POST', 
+            headers:{'Content-Type':'application/json'}, 
+            body:JSON.stringify(f) 
+        });
         const d = await res.json();
-        if (d.success!==false) {
-            const blob = new Blob([JSON.stringify(d,null,2)], {type:'application/json;charset=utf-8'});
-            const a = Object.assign(document.createElement('a'), {href:URL.createObjectURL(blob), download:genFilename(f,d.total_records)});
-            a.click(); URL.revokeObjectURL(a.href);
+        if (d.success !== false) {
+            // 处理导出数据，给收入加 + 号
+            const exportData = {
+                ...d,
+                total_income: formatMoney(d.total_income),
+                total_expense: Math.round(d.total_expense),
+                balance: formatMoney(d.balance),
+                records: d.records.map(r => ({
+                    ...r,
+                    money: formatMoney(r.money)
+                }))
+            };
+            
+            const blob = new Blob([JSON.stringify(exportData, null, 2)], {
+                type: 'application/json;charset=utf-8'
+            });
+            const a = Object.assign(document.createElement('a'), {
+                href: URL.createObjectURL(blob), 
+                download: genFilename(f, d.total_records)
+            });
+            a.click(); 
+            URL.revokeObjectURL(a.href);
             showInfo(`导出成功！${d.total_records}条记录`);
-        } else alert('导出失败：'+(d.message||'未知错误'));
-    } catch { alert('导出失败'); }
+        } else {
+            alert('导出失败：' + (d.message || '未知错误'));
+        }
+    } catch { 
+        alert('导出失败'); 
+    }
 }
 
 async function previewData() {
     const f = getFilters();
     try {
-        const res = await fetch('/qian/export/filtered', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(f) });
+        const res = await fetch('/qian/export/filtered', { 
+            method:'POST', 
+            headers:{'Content-Type':'application/json'}, 
+            body:JSON.stringify(f) 
+        });
         const d = await res.json();
-        if (d.success!==false) {
+        if (d.success !== false) {
             $('#statsArea').style.display = 'grid';
             $('#totalRecords').textContent = d.total_records;
-            $('#totalIncome').textContent = Math.round(d.total_income);
+            $('#totalIncome').textContent = formatMoney(d.total_income);
             $('#totalExpense').textContent = Math.round(d.total_expense);
-            const bal = d.balance, be = $('#balance');
-            be.textContent = Math.round(Math.abs(bal));
-            be.style.color = bal>=0 ? '#d32f2f' : '#388e3c';
-            showInfo(['年：'+(f.year||'全部'), '月：'+(f.month||'全部'), f.categories.length?f.categories.join(','):'全部分类'].join(' · '));
+            
+            const bal = d.balance;
+            const be = $('#balance');
+            be.textContent = formatMoney(bal);
+            be.style.color = bal >= 0 ? '#d32f2f' : '#388e3c';
+            
+            showInfo(['年：' + (f.year || '全部'), 
+                      '月：' + (f.month || '全部'), 
+                      f.categories.length ? f.categories.join(',') : '全部分类'].join(' · '));
         }
-    } catch { alert('预览失败'); }
+    } catch { 
+        alert('预览失败'); 
+    }
 }
 
-const showInfo = msg => { const el = $('#filterInfo'); el.textContent = msg; el.style.display = 'block'; setTimeout(() => el.style.display = 'none', 5000); };
+const showInfo = msg => { 
+    const el = $('#filterInfo'); 
+    el.textContent = msg; 
+    el.style.display = 'block'; 
+    setTimeout(() => el.style.display = 'none', 5000); 
+};
 
 const resetFilters = () => {
     ['year','month','money_type','keyword'].forEach(id => $('#'+id).value = '');
