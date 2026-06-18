@@ -140,6 +140,8 @@ def tizhong():
     today = get_china_time()
     return render_template('tizhong.html', records_json=json.dumps(records_list, ensure_ascii=False), today=today, current_limit=limit)
 
+
+
 @app.route('/tizhong/data')
 def tizhong_data():
     """导出体重数据JSON"""
@@ -167,11 +169,12 @@ def tizhong_data():
     
     return jsonify({
         'success': True,
+        'situation': '身高170多一点，有多发胆囊息肉+慢性鼻窦炎以及可能还有其它我不知情的炎症。目标是增肌增重，但胃口小吃不下，需要靠流食加餐。 玄学角度：己土身弱，喜火土，用神是火，忌金水木',
         'export_info': {
             'export_time': get_china_time(),
             'data_range': '全部记录' if limit == '0' else f'最近{limit}条记录',
             'total_count': len(records_list),
-            'source': '体重追踪系统'
+            'tips': '抗阻力训练欲望: 0=完全没想法，身体都不想动 ,1= 大脑有一点点想法，但身体轻微抗拒，最终没行动, 2= 可以动几下，做点低强度的训练, 3= 可以来一次正式的训练，比如深蹲之类的, 4= 感觉自己无敌'
         },
         'records': records_list
     })
