@@ -29,8 +29,7 @@
                     <input type="date" id="time" name="time" value="{{ now }}" required class="compact-input date-input" style="min-width:120px">
                     <div class="radio-group" id="type-radio-group">
                         <label class="radio-option"><input type="radio" name="type" value="收入" required><span class="radio-label">收入</span></label>
-                        <label class="radio-option"><input type="radio" name="type" value="饮食"><span class="radio-label">饮食</span></label>
-                        <label class="radio-option"><input type="radio" name="type" value="外食"><span class="radio-label">外食</span></label>
+                        <label class="radio-option"><input type="radio" name="type" value="吃喝"><span class="radio-label">吃喝</span></label>
                         <label class="radio-option"><input type="radio" name="type" value="交通"><span class="radio-label">交通</span></label>
                         <label class="radio-option"><input type="radio" name="type" value="日用"><span class="radio-label">日用</span></label>
                         <label class="radio-option"><input type="radio" name="type" value="娱乐"><span class="radio-label">娱乐</span></label>
@@ -53,8 +52,6 @@
                 <div class="keyword-search-wrapper"><input type="text" name="keyword" id="keyword" placeholder="搜索..." value="{{ keyword or '' }}" class="keyword-input"></div>
                 <button type="button" onclick="toggleSpecial()" class="special-toggle-btn {% if show_special == 'true' %}active{% endif %}">显示房贷/赞助</button>
                 <input type="hidden" name="show_special" id="show_special" value="{{ show_special }}">
-                <button type="button" onclick="toggleMergeFood()" class="special-toggle-btn {% if merge_food == 'false' %}active{% endif %}">细分饮食/外食</button>
-                <input type="hidden" name="merge_food" id="merge_food" value="{{ merge_food }}">
                 <button type="submit" class="filter-apply-btn">筛选</button>
                 <a href="{{ url_for('qian') }}" class="filter-reset-btn">重置</a>
                 <a href="{{ url_for('export_money_page') }}" class="filter-reset-btn" style="background:#7B3F00;color:#fff;" target="_blank">数据导出页面</a>
@@ -62,8 +59,8 @@
             <div class="filter-stats" id="filterStats">
     {% set total_display_count = namespace(value=0) %}
     {% for year, year_data in grouped_records.items() %}{% for month, month_data in year_data.months.items() %}{% for day, day_data in month_data.days.items() %}{% set total_display_count.value = total_display_count.value + day_data.records|length %}{% endfor %}{% endfor %}{% endfor %}
-    {% if current_type or keyword or (show_special == 'true') or (merge_food == 'false') %}
-    <div class="search-info">筛选结果: <strong class="filter-count">{{ total_display_count.value }}</strong> 条记录{% if current_type %}<span class="filter-badge">分类: {{ current_type }}</span>{% endif %}{% if keyword %}<span class="filter-badge">关键词: "{{ keyword }}"</span>{% endif %}{% if show_special == 'true' %}<span class="filter-badge">已显示房贷/赞助</span>{% endif %}{% if merge_food == 'false' %}<span class="filter-badge">已细分饮食/外食</span>{% endif %}</div>
+    {% if current_type or keyword or (show_special == 'true') %}
+    <div class="search-info">筛选结果: <strong class="filter-count">{{ total_display_count.value }}</strong> 条记录{% if current_type %}<span class="filter-badge">分类: {{ current_type }}</span>{% endif %}{% if keyword %}<span class="filter-badge">关键词: "{{ keyword }}"</span>{% endif %}{% if show_special == 'true' %}<span class="filter-badge">已显示房贷/赞助</span>{% endif %}</div>
     {% elif total_display_count.value > 0 %}
     <div class="search-info">共 <strong class="filter-count">{{ total_display_count.value }}</strong> 条记录</div>
     {% endif %}
@@ -85,7 +82,7 @@
                                     <div class="record-items">
                                         {% for record in day_data.records %}
                                             <div class="compact-record {% if keyword and (keyword.lower() in record.text.lower() or keyword.lower() in record.type.lower()) %}highlight-match{% endif %}" data-id="{{ record.id }}">
-                                                <div class="record-line"><span class="record-meta"><span class="record-type-tag {% if merge_food == 'true' and record.type == '外食' %}type-饮食{% else %}type-{{ record.type[:2] }}{% endif %}" data-type="{% if merge_food == 'true' and record.type == '外食' %}饮食{% else %}{{ record.type }}{% endif %}">{% if merge_food == 'true' and record.type == '外食' %}饮食{% else %}{{ record.type }}{% endif %}</span><span class="record-desc">{% if keyword and keyword.lower() in record.text.lower() %}{% set highlighted = record.text | replace(keyword, '██' + keyword + '██') %}{% set parts = highlighted.split('██') %}{% for part in parts %}{% if loop.index is even %}<mark>{{ part }}</mark>{% else %}{{ part }}{% endif %}{% endfor %}{% else %}{{ record.text }}{% endif %}</span><span class="record-amount {% if record.money > 0 %}income{% else %}expense{% endif %}">{{ format_money(record.money) }}</span></span><span class="record-actions"><button class="tiny-delete-btn" onclick="deleteMoneyRecord('{{ record.id }}')" title="删除">×</button></span></div>
+                                                <div class="record-line"><span class="record-meta"><span class="record-type-tag type-{{ record.type[:2] }}" data-type="{{ record.type }}">{{ record.type }}</span><span class="record-desc">{% if keyword and keyword.lower() in record.text.lower() %}{% set highlighted = record.text | replace(keyword, '██' + keyword + '██') %}{% set parts = highlighted.split('██') %}{% for part in parts %}{% if loop.index is even %}<mark>{{ part }}</mark>{% else %}{{ part }}{% endif %}{% endfor %}{% else %}{{ record.text }}{% endif %}</span><span class="record-amount {% if record.money > 0 %}income{% else %}expense{% endif %}">{{ format_money(record.money) }}</span></span><span class="record-actions"><button class="tiny-delete-btn" onclick="deleteMoneyRecord('{{ record.id }}')" title="删除">×</button></span></div>
                                             </div>
                                         {% endfor %}
                                     </div>
@@ -104,7 +101,7 @@
 
 {% block extra_css %}
 <style>
-:root{--c-in:#f44336;--c-diet:#FF6B35;--c-waishi:#ff9800;--c-traffic:#2196f3;--c-daily:#9c27b0;--c-play:#e91e63;--c-infra:#00bcd4;--c-house:#00897b;--c-sponsor:#ff6b6b;--c-medical:#39a119;--c-other:#9e9e9e;--c-expense:#388e3c}
+:root{--c-in:#f44336;--c-chihe:#FF6B35;--c-traffic:#2196f3;--c-daily:#9c27b0;--c-play:#e91e63;--c-infra:#00bcd4;--c-house:#00897b;--c-sponsor:#ff6b6b;--c-medical:#39a119;--c-other:#9e9e9e;--c-expense:#388e3c}
 *{box-sizing:border-box}
 .stats-section{background:#fff;border-radius:8px;padding:12px;margin-bottom:16px;border:1px solid #e0e0e0;box-shadow:0 1px 3px rgba(0,0,0,.05)}
 .category-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:8px}
@@ -115,8 +112,7 @@
 .category-item{display:grid;grid-template-columns:70px 1fr 50px;align-items:center;gap:6px;font-size:11px}
 .category-name{font-size:10px;padding:1px 4px;border-radius:2px;font-weight:500;white-space:nowrap;border:1px solid!important;overflow:hidden;text-overflow:ellipsis}
 .category-name.type-收入{border-color:var(--c-in)!important;color:var(--c-in)!important}
-.category-name.type-饮食{border-color:var(--c-diet)!important;color:var(--c-diet)!important}
-.category-name.type-外食{border-color:var(--c-waishi)!important;color:var(--c-waishi)!important}
+.category-name.type-吃喝{border-color:var(--c-chihe)!important;color:var(--c-chihe)!important}
 .category-name.type-交通{border-color:var(--c-traffic)!important;color:var(--c-traffic)!important}
 .category-name.type-日用{border-color:var(--c-daily)!important;color:var(--c-daily)!important}
 .category-name.type-娱乐{border-color:var(--c-play)!important;color:var(--c-play)!important}
@@ -137,10 +133,8 @@
 .radio-label{font-size:11px;padding:3px 8px;border-radius:2px;color:#555!important;transition:all .2s;white-space:nowrap;background:#fff!important;border:1px solid!important}
 .radio-option input[type="radio"][value="收入"]+.radio-label{border-color:var(--c-in)!important;color:var(--c-in)!important}
 .radio-option input[type="radio"][value="收入"]:checked+.radio-label{background:var(--c-in)!important;color:#fff!important}
-.radio-option input[type="radio"][value="饮食"]+.radio-label{border-color:var(--c-diet)!important;color:var(--c-diet)!important}
-.radio-option input[type="radio"][value="饮食"]:checked+.radio-label{background:var(--c-diet)!important;color:#fff!important}
-.radio-option input[type="radio"][value="外食"]+.radio-label{border-color:var(--c-waishi)!important;color:var(--c-waishi)!important}
-.radio-option input[type="radio"][value="外食"]:checked+.radio-label{background:var(--c-waishi)!important;color:#fff!important}
+.radio-option input[type="radio"][value="吃喝"]+.radio-label{border-color:var(--c-chihe)!important;color:var(--c-chihe)!important}
+.radio-option input[type="radio"][value="吃喝"]:checked+.radio-label{background:var(--c-chihe)!important;color:#fff!important}
 .radio-option input[type="radio"][value="交通"]+.radio-label{border-color:var(--c-traffic)!important;color:var(--c-traffic)!important}
 .radio-option input[type="radio"][value="交通"]:checked+.radio-label{background:var(--c-traffic)!important;color:#fff!important}
 .radio-option input[type="radio"][value="日用"]+.radio-label{border-color:var(--c-daily)!important;color:var(--c-daily)!important}
@@ -183,17 +177,16 @@
 }
 
 .record-type-tag{font-size:9px;padding:2px 6px;border-radius:2px;font-weight:500;white-space:nowrap;flex-shrink:0;background:#fff!important;border:1px solid!important}
-.record-type-tag[data-type="收入"],.record-type-tag.type-收入,.record-type-tag[class*="type-收入"]{border-color:var(--c-in)!important;color:var(--c-in)!important}
-.record-type-tag[data-type="饮食"],.record-type-tag.type-饮食,.record-type-tag[class*="type-饮食"]{border-color:var(--c-diet)!important;color:var(--c-diet)!important}
-.record-type-tag[data-type="外食"],.record-type-tag.type-外食,.record-type-tag[class*="type-外食"]{border-color:var(--c-waishi)!important;color:var(--c-waishi)!important}
-.record-type-tag[data-type="交通"],.record-type-tag.type-交通,.record-type-tag[class*="type-交通"]{border-color:var(--c-traffic)!important;color:var(--c-traffic)!important}
-.record-type-tag[data-type="日用"],.record-type-tag.type-日用,.record-type-tag[class*="type-日用"]{border-color:var(--c-daily)!important;color:var(--c-daily)!important}
-.record-type-tag[data-type="娱乐"],.record-type-tag.type-娱乐,.record-type-tag[class*="type-娱乐"]{border-color:var(--c-play)!important;color:var(--c-play)!important}
-.record-type-tag[data-type="基建"],.record-type-tag.type-基建,.record-type-tag[class*="type-基建"]{border-color:var(--c-infra)!important;color:var(--c-infra)!important}
-.record-type-tag[data-type="房贷"],.record-type-tag.type-房贷,.record-type-tag[class*="type-房贷"]{border-color:var(--c-house)!important;color:var(--c-house)!important}
-.record-type-tag[data-type="赞助"],.record-type-tag.type-赞助,.record-type-tag[class*="type-赞助"]{border-color:var(--c-sponsor)!important;color:var(--c-sponsor)!important}
-.record-type-tag[data-type="医疗"],.record-type-tag.type-医疗,.record-type-tag[class*="type-医疗"]{border-color:var(--c-medical)!important;color:var(--c-medical)!important}
-.record-type-tag[data-type="其他"],.record-type-tag.type-其他,.record-type-tag[class*="type-其他"]{border-color:var(--c-other)!important;color:var(--c-other)!important}
+.record-type-tag.type-收入,.record-type-tag[data-type="收入"]{border-color:var(--c-in)!important;color:var(--c-in)!important}
+.record-type-tag.type-吃喝,.record-type-tag[data-type="吃喝"]{border-color:var(--c-chihe)!important;color:var(--c-chihe)!important}
+.record-type-tag.type-交通,.record-type-tag[data-type="交通"]{border-color:var(--c-traffic)!important;color:var(--c-traffic)!important}
+.record-type-tag.type-日用,.record-type-tag[data-type="日用"]{border-color:var(--c-daily)!important;color:var(--c-daily)!important}
+.record-type-tag.type-娱乐,.record-type-tag[data-type="娱乐"]{border-color:var(--c-play)!important;color:var(--c-play)!important}
+.record-type-tag.type-基建,.record-type-tag[data-type="基建"]{border-color:var(--c-infra)!important;color:var(--c-infra)!important}
+.record-type-tag.type-房贷,.record-type-tag[data-type="房贷"]{border-color:var(--c-house)!important;color:var(--c-house)!important}
+.record-type-tag.type-赞助,.record-type-tag[data-type="赞助"]{border-color:var(--c-sponsor)!important;color:var(--c-sponsor)!important}
+.record-type-tag.type-医疗,.record-type-tag[data-type="医疗"]{border-color:var(--c-medical)!important;color:var(--c-medical)!important}
+.record-type-tag.type-其他,.record-type-tag[data-type="其他"]{border-color:var(--c-other)!important;color:var(--c-other)!important}
 .compact-records-container{overflow-y:auto}
 .compact-records-container::-webkit-scrollbar{width:4px}
 .compact-records-container::-webkit-scrollbar-track{background:#f1f1f1}
@@ -203,7 +196,7 @@
 .income{color:var(--c-in)}.expense{color:var(--c-expense)}
 .total-amount.income{color:#b71c1c}.total-amount.expense{color:#1b5e20}
 .compact-filters{padding-top:8px;border-top:1px solid #e0e0e0}
-.filter-grid{display:grid;grid-template-columns:repeat(4,1fr) 2fr auto auto auto auto auto auto;gap:6px;align-items:center}
+.filter-grid{display:grid;grid-template-columns:repeat(4,1fr) 2fr auto auto auto auto auto;gap:6px;align-items:center}
 .filter-select{padding:4px 6px;border:1px solid #e0e0e0;border-radius:4px;font-size:11px;height:26px;background:#fff;cursor:pointer}
 .filter-apply-btn,.filter-reset-btn,.special-toggle-btn{padding:4px 8px;background:#fff;color:#333;border:1px solid #ddd;border-radius:4px;font-size:11px;height:26px;cursor:pointer;transition:all .2s;text-decoration:none;white-space:nowrap}
 .filter-apply-btn:hover,.filter-reset-btn:hover,.special-toggle-btn:hover{background:#e0e0e0;border-color:#999}
@@ -327,7 +320,5 @@ $('#money')?.addEventListener('blur', e => { const v = parseFloat(e.target.value
 $$('.radio-option').forEach(l => l.addEventListener('click', () => l.querySelector('input[type="radio"]').checked = true));
 
 const toggleSpecial = () => { const i = $('#show_special'); i.value = i.value === 'true' ? 'false' : 'true'; $('#search-form').submit(); };
-
-const toggleMergeFood = () => { const i = $('#merge_food'); i.value = i.value === 'true' ? 'false' : 'true'; $('#search-form').submit(); };
 </script>
 {% endblock %}

@@ -169,7 +169,7 @@ def tizhong_data():
     
     return jsonify({
         'success': True,
-        'situation': '身高170多一点，有多发胆囊息肉+慢性鼻窦炎以及可能还有其它我不知情的炎症。目标是增肌增重，但胃口小吃不下，需要靠流食加餐。 玄学角度：己土身弱，喜火土，用神是火，忌金水木',
+        'situation': '身高170多一点，有多发胆囊息肉+慢性鼻窦炎以及可能还有其它我不知情的炎症。目标是增肌增重，希望体重能稳定在75kg，但胃口小吃不下，需要靠流食加餐。 玄学角度：己土身弱，喜火土，用神是火，忌金水木',
         'export_info': {
             'export_time': get_china_time(),
             'data_range': '全部记录' if limit == '0' else f'最近{limit}条记录',
@@ -353,7 +353,8 @@ def toggle_blog_hidden(blog_id):
     except Exception as e:
         return jsonify({'success': False, 'message': str(e)})
 
-# === 记账相关路由 ===
+
+
 @app.route('/qian')
 def qian():
     year = request.args.get('year')
@@ -362,7 +363,6 @@ def qian():
     sort = request.args.get('sort', 'desc')
     keyword = request.args.get('keyword', '')
     show_special = request.args.get('show_special', 'false')
-    merge_food = request.args.get('merge_food', 'true')
     now = get_china_time()
     if year is None:
         year = now[:4]
@@ -393,9 +393,9 @@ def qian():
     for r in records:
         m = r['money']
         t = r['type']
-        # 合并模式：外食归类到饮食
-        if merge_food == 'true' and t == '外食':
-            t = '饮食'
+        # 删除这两行：
+        # if merge_food == 'true' and t == '外食':
+        #     t = '饮食'
         if m > 0:
             total_in += m
             if t not in income_categories:
@@ -445,7 +445,7 @@ def qian():
         grouped_records[y]['months'][m]['total'] += amt
         grouped_records[y]['total'] += amt
     conn.close()
-    return render_template('qian.html', grouped_records=grouped_records, available_years=years, available_months=months, available_types=types, current_year=year, current_month=month.zfill(2) if month else None, current_type=type_, sort_order=sort, keyword=keyword, now=now, total_income=total_in, total_expense=total_out, balance=total_in-total_out, income_categories=income_list, expense_categories=expense_list, show_special=show_special, merge_food=merge_food)
+    return render_template('qian.html', grouped_records=grouped_records, available_years=years, available_months=months, available_types=types, current_year=year, current_month=month.zfill(2) if month else None, current_type=type_, sort_order=sort, keyword=keyword, now=now, total_income=total_in, total_expense=total_out, balance=total_in-total_out, income_categories=income_list, expense_categories=expense_list, show_special=show_special)  # 删除 merge_food=merge_food
 
 @app.route('/add_money_record', methods=['POST'])
 def add_money_record():
@@ -697,6 +697,8 @@ def manual_backup():
         return '备份成功'
     except Exception as e:
         return f'备份失败：{str(e)}'
+
+
 
 # === 启动 ===
 if __name__ == '__main__':

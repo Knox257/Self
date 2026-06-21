@@ -3,120 +3,399 @@
 {% block title %}记账数据导出{% endblock %}
 
 {% block content %}
-<div class="page-container" style="max-width:1200px">
-    <div class="export-header" style="text-align:center;margin-bottom:24px;padding-bottom:16px;border-bottom:2px solid #f0f0f0">
-        <h1 style="color:var(--primary-color);font-size:24px;margin-bottom:6px">记账数据导出</h1>
-        <p style="color:#666;font-size:13px">选择筛选条件，导出符合条件的数据为JSON文件</p>
+<div class="page-container export-page">
+    <div class="export-header">
+        <h1>记账数据导出</h1>
+        <p>选择筛选条件，导出符合条件的数据为JSON文件</p>
     </div>
 
     <div class="compact-form-section">
-        <h3 style="font-size:16px;color:#333;margin-bottom:16px;padding-bottom:8px;border-bottom:2px solid var(--primary-color);display:inline-block">筛选条件</h3>
-        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px">
-            <div>
-                <label style="font-size:12px;color:#666;display:block;margin-bottom:4px">年份</label>
-                <select id="year" class="filter-select" style="width:100%"><option value="">全部年份</option>{% for year in available_years %}<option value="{{ year }}" {% if current_year==year %}selected{% endif %}>{{ year }}年</option>{% endfor %}</select>
+        <h3 class="section-title">筛选条件</h3>
+
+        <div class="filter-row">
+            <div class="filter-group">
+                <label>年份</label>
+                <select id="year" class="filter-select">
+                    <option value="">全部年份</option>
+                    {% for year in available_years %}
+                        <option value="{{ year }}" {% if current_year==year %}selected{% endif %}>{{ year }}年</option>
+                    {% endfor %}
+                </select>
             </div>
-            <div>
-                <label style="font-size:12px;color:#666;display:block;margin-bottom:4px">月份</label>
-                <select id="month" class="filter-select" style="width:100%"><option value="">全部月份</option>{% for m in range(1,13) %}<option value="{{ '%02d'|format(m) }}" {% if current_month=='%02d'|format(m) %}selected{% endif %}>{{ m }}月</option>{% endfor %}</select>
+            <div class="filter-group">
+                <label>月份</label>
+                <select id="month" class="filter-select">
+                    <option value="">全部月份</option>
+                    {% for m in range(1,13) %}
+                        <option value="{{ '%02d'|format(m) }}" {% if current_month=='%02d'|format(m) %}selected{% endif %}>{{ m }}月</option>
+                    {% endfor %}
+                </select>
             </div>
-            <div>
-                <label style="font-size:12px;color:#666;display:block;margin-bottom:4px">收支类型</label>
-                <select id="money_type" class="filter-select" style="width:100%"><option value="">全部</option><option value="income">仅收入</option><option value="expense">仅支出</option></select>
+            <div class="filter-group">
+                <label>收支类型</label>
+                <select id="money_type" class="filter-select">
+                    <option value="">全部</option>
+                    <option value="income">仅收入</option>
+                    <option value="expense">仅支出</option>
+                </select>
             </div>
         </div>
 
-        <div style="margin-bottom:16px">
-            <label style="font-size:12px;color:#666;display:block;margin-bottom:4px">具体分类（可多选）</label>
-            <div id="categoryCheckboxGroup" style="display:flex;flex-wrap:wrap;gap:8px;padding:8px;border:1px solid #e0e0e0;border-radius:6px;background:#fafafa;max-height:100px;overflow-y:auto">
+        <div class="filter-group category-group">
+            <label>具体分类（可多选）</label>
+            <div id="categoryCheckboxGroup" class="category-checkbox-group">
                 {% for type in available_types %}
-                <label style="display:flex;align-items:center;cursor:pointer;font-size:12px;color:#555"><input type="checkbox" value="{{ type }}" class="category-checkbox" style="margin-right:4px;accent-color:var(--primary-color)">{{ type }}</label>
+                <label class="checkbox-label">
+                    <input type="checkbox" value="{{ type }}" class="category-checkbox"> {{ type }}
+                </label>
                 {% endfor %}
             </div>
         </div>
 
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">
-            <div>
-                <label style="font-size:12px;color:#666;display:block;margin-bottom:4px">关键词搜索</label>
-                <input type="text" id="keyword" placeholder="描述关键词" class="compact-input" style="width:100%">
+        <div class="filter-row">
+            <div class="filter-group">
+                <label>关键词搜索</label>
+                <input type="text" id="keyword" placeholder="描述关键词" class="compact-input">
             </div>
-            <div>
-                <label style="font-size:12px;color:#666;display:block;margin-bottom:4px">特殊项</label>
-                <select id="show_special" class="filter-select" style="width:100%"><option value="true">显示房贷/赞助</option><option value="false">隐藏房贷/赞助</option></select>
+            <div class="filter-group">
+                <label>特殊项</label>
+                <select id="show_special" class="filter-select">
+                    <option value="true">显示房贷/赞助</option>
+                    <option value="false">隐藏房贷/赞助</option>
+                </select>
             </div>
-            <div style="display:flex;gap:6px;align-items:flex-end">
-                <button onclick="previewData()" class="add-btn" style="flex:1;background:#e9ecef;color:#333">预览</button>
-                <button onclick="exportData()" class="add-btn" style="flex:1">导出</button>
-                <button onclick="resetFilters()" class="add-btn" style="flex:1;background:#f5f5f5;color:#666;border:1px solid #ddd">重置</button>
+            <div class="filter-group button-group">
+                <button onclick="exportData()" class="export-btn export-main-btn">导出</button>
+                <button onclick="resetFilters()" class="export-btn reset-btn">重置</button>
             </div>
         </div>
     </div>
 
-    <div id="statsArea" style="display:none;display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px">
-        <div class="stat-card"><div style="font-size:11px;color:#999">总记录数</div><div style="font-size:22px;font-weight:700;color:#333" id="totalRecords">0</div></div>
-        <div class="stat-card"><div style="font-size:11px;color:#999">总收入</div><div style="font-size:22px;font-weight:700;color:#d32f2f" id="totalIncome">0</div></div>
-        <div class="stat-card"><div style="font-size:11px;color:#999">总支出</div><div style="font-size:22px;font-weight:700;color:#388e3c" id="totalExpense">0</div></div>
-        <div class="stat-card"><div style="font-size:11px;color:#999">结余</div><div style="font-size:22px;font-weight:700" id="balance">0</div></div>
+    <div id="statsArea" class="stats-area" style="display:none">
+        <div class="stat-card"><div class="stat-label">总记录数</div><div class="stat-value" id="totalRecords">0</div></div>
+        <div class="stat-card"><div class="stat-label">总收入</div><div class="stat-value income-color" id="totalIncome">0</div></div>
+        <div class="stat-card"><div class="stat-label">总支出</div><div class="stat-value expense-color" id="totalExpense">0</div></div>
+        <div class="stat-card"><div class="stat-label">结余</div><div class="stat-value" id="balance">0</div></div>
     </div>
 
-    <div id="filterInfo" style="display:none;background:#e8f5e9;border-left:4px solid #4caf50;padding:10px 14px;border-radius:6px;font-size:13px;color:#2e7d32"></div>
+    <div id="filterInfo" class="filter-info" style="display:none"></div>
 </div>
+{% endblock %}
 
+{% block extra_css %}
 <style>
-.stat-card{background:#fff;border:1px solid #e0e0e0;border-radius:8px;padding:14px;text-align:center}
-.stat-card:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,.1)}
-body.dark-mode .export-header{border-bottom-color:#444}
-body.dark-mode .export-header p{color:#aaa}
-body.dark-mode h3{color:#e0e0e0}
-body.dark-mode label{color:#aaa}
-body.dark-mode #categoryCheckboxGroup{background:#2a2a2a;border-color:#444}
-body.dark-mode .stat-card{background:#242424;border-color:#444}
-body.dark-mode .stat-card:hover{box-shadow:0 4px 12px rgba(0,0,0,.3)}
-body.dark-mode #filterInfo{background:#1a3a1a;border-left-color:#4caf50;color:#81c784}
-</style>
+/* ---------- 导出页面布局 ---------- */
+.export-page {
+    max-width: 1200px;
+}
 
+.export-header {
+    text-align: center;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    /* 已移除 border-bottom */
+}
+
+.export-header h1 {
+    color: var(--primary-color);
+    font-size: 24px;
+    margin-bottom: 6px;
+}
+
+.export-header p {
+    color: #666;
+    font-size: 13px;
+}
+
+.section-title {
+    font-size: 16px;
+    color: #333;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--primary-color);
+    display: inline-block;
+}
+
+/* 筛选行 */
+.filter-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.filter-group label {
+    font-size: 12px;
+    color: #666;
+    margin-bottom: 4px;
+}
+
+/* 分类多选区域 */
+.category-group {
+    margin-bottom: 16px;
+}
+
+.category-checkbox-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 8px;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    background: #fafafa;
+    max-height: 100px;
+    overflow-y: auto;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    font-size: 12px;
+    color: #555;
+}
+
+.checkbox-label input {
+    margin-right: 4px;
+    accent-color: var(--primary-color);
+}
+
+/* 按钮组 */
+.button-group {
+    flex-direction: row;
+    align-items: flex-end;
+    gap: 6px;
+}
+
+.export-btn {
+    flex: 1;
+    padding: 6px 12px;
+    border: none;
+    border-radius: 4px;
+    font-size: 13px;
+    cursor: pointer;
+    height: 32px;
+    font-weight: 500;
+    transition: background 0.2s;
+}
+
+.export-main-btn {
+    background: var(--primary-color);
+    color: #fff;
+}
+
+.reset-btn {
+    background: #f5f5f5;
+    color: #666;
+    border: 1px solid #ddd;
+}
+
+/* 统计卡片区域 */
+.stats-area {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.stat-card {
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 14px;
+    text-align: center;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.stat-label {
+    font-size: 11px;
+    color: #999;
+    margin-bottom: 4px;
+}
+
+.stat-value {
+    font-size: 22px;
+    font-weight: 700;
+    color: #333;
+}
+
+.income-color { color: #d32f2f; }
+.expense-color { color: #388e3c; }
+
+/* 提示信息 - 使用主题色 */
+.filter-info {
+    display: none;
+    background: var(--primary-light);
+    border-left: 4px solid var(--primary-color);
+    padding: 10px 14px;
+    border-radius: 6px;
+    font-size: 13px;
+    color: var(--primary-dark);
+}
+
+/* ---------- 暗黑模式 ---------- */
+body.dark-mode .export-header p {
+    color: #aaa !important;
+}
+
+body.dark-mode .section-title {
+    color: #e0e0e0 !important;
+}
+
+body.dark-mode .filter-group label {
+    color: #aaa !important;
+}
+
+body.dark-mode .category-checkbox-group {
+    background: #2a2a2a !important;
+    border-color: #444 !important;
+}
+
+body.dark-mode .checkbox-label {
+    color: #ccc !important;
+}
+
+body.dark-mode .category-checkbox-group::-webkit-scrollbar {
+    width: 4px;
+}
+
+body.dark-mode .category-checkbox-group::-webkit-scrollbar-track {
+    background: #2a2a2a;
+}
+
+body.dark-mode .category-checkbox-group::-webkit-scrollbar-thumb {
+    background: #555;
+    border-radius: 2px;
+}
+
+body.dark-mode .stat-card {
+    background: #242424 !important;
+    border-color: #444 !important;
+}
+
+body.dark-mode .stat-card:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+body.dark-mode .stat-label {
+    color: #aaa !important;
+}
+
+body.dark-mode .stat-value {
+    color: #e0e0e0 !important;
+}
+
+body.dark-mode .income-color { color: #f44336 !important; }
+body.dark-mode .expense-color { color: #66bb6a !important; }
+
+body.dark-mode .export-main-btn {
+    background: var(--primary-color) !important;
+    color: #fff !important;
+}
+
+body.dark-mode .reset-btn {
+    background: #333 !important;
+    color: #aaa !important;
+    border-color: #555 !important;
+}
+
+/* 暗黑模式提示框 - 主题色适配 */
+body.dark-mode .filter-info {
+    background: var(--primary-light);
+    border-left-color: var(--primary-color);
+    color: #e0c8a8;
+}
+
+body.dark-mode .compact-input {
+    background: #333 !important;
+    color: #e0e0e0 !important;
+    border-color: #444 !important;
+}
+
+body.dark-mode .compact-input:focus {
+    background: #3a3a3a !important;
+    border-color: var(--primary-color) !important;
+}
+
+body.dark-mode .filter-select {
+    background: #333 !important;
+    color: #e0e0e0 !important;
+    border-color: #444 !important;
+}
+
+body.dark-mode .filter-select option {
+    background: #333 !important;
+    color: #e0e0e0 !important;
+}
+</style>
+{% endblock %}
+
+{% block scripts %}
 <script>
 const $ = sel => document.querySelector(sel);
 const $$ = sel => document.querySelectorAll(sel);
 
-const getFilters = () => ({
-    year: $('#year').value,
-    month: $('#month').value,
-    categories: [...$$('.category-checkbox:checked')].map(cb => cb.value),
-    money_type: $('#money_type').value,
-    keyword: $('#keyword').value,
-    show_special: $('#show_special').value
-});
+function getFilters() {
+    return {
+        year: $('#year').value,
+        month: $('#month').value,
+        categories: [...$$('.category-checkbox:checked')].map(cb => cb.value),
+        money_type: $('#money_type').value,
+        keyword: $('#keyword').value,
+        show_special: $('#show_special').value
+    };
+}
 
-const genFilename = (f, total) => {
-    const p = [];
-    if (f.year) p.push(f.year+'年');
-    if (f.month) p.push(parseInt(f.month)+'月');
-    if (f.categories.length && f.categories.length<=3) p.push(f.categories.join('、'));
-    else if (f.categories.length>3) p.push(f.categories.length+'个分类');
-    if (f.money_type==='income') p.push('收入');
-    if (f.money_type==='expense') p.push('支出');
-    if (f.keyword) p.push('关键词'+f.keyword);
-    return `记账_${p.length?p.join('_'):'全部数据'}_${total}条_${new Date().toISOString().slice(0,19).replace(/:/g,'-')}.json`;
-};
+function genFilename(f, total) {
+    const parts = [];
+    if (f.year) parts.push(f.year + '年');
+    if (f.month) parts.push(parseInt(f.month) + '月');
+    if (f.categories.length && f.categories.length <= 3) {
+        parts.push(f.categories.join('、'));
+    } else if (f.categories.length > 3) {
+        parts.push(f.categories.length + '个分类');
+    }
+    if (f.money_type === 'income') parts.push('收入');
+    if (f.money_type === 'expense') parts.push('支出');
+    if (f.keyword) parts.push('关键词' + f.keyword);
+    
+    const name = parts.length ? parts.join('_') : '全部数据';
+    const dateStr = new Date().toISOString().slice(0, 19).replace(/:/g, '-');
+    return `记账_${name}_${total}条_${dateStr}.json`;
+}
 
-// 格式化金额显示
-const formatMoney = (amount) => {
+function formatMoney(amount) {
     const num = Math.round(amount);
     return num > 0 ? '+' + num : num;
-};
+}
+
+function showInfo(msg, duration = 5000) {
+    const el = $('#filterInfo');
+    el.textContent = msg;
+    el.style.display = 'block';
+    setTimeout(() => el.style.display = 'none', duration);
+}
 
 async function exportData() {
     const f = getFilters();
     try {
-        const res = await fetch('/qian/export/filtered', { 
-            method:'POST', 
-            headers:{'Content-Type':'application/json'}, 
-            body:JSON.stringify(f) 
+        const res = await fetch('/qian/export/filtered', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(f)
         });
         const d = await res.json();
         if (d.success !== false) {
-            // 处理导出数据，给收入加 + 号
             const exportData = {
                 ...d,
                 total_income: formatMoney(d.total_income),
@@ -132,62 +411,29 @@ async function exportData() {
                 type: 'application/json;charset=utf-8'
             });
             const a = Object.assign(document.createElement('a'), {
-                href: URL.createObjectURL(blob), 
+                href: URL.createObjectURL(blob),
                 download: genFilename(f, d.total_records)
             });
-            a.click(); 
+            a.click();
             URL.revokeObjectURL(a.href);
             showInfo(`导出成功！${d.total_records}条记录`);
         } else {
             alert('导出失败：' + (d.message || '未知错误'));
         }
-    } catch { 
-        alert('导出失败'); 
+    } catch {
+        alert('导出失败，请检查网络');
     }
 }
 
-async function previewData() {
-    const f = getFilters();
-    try {
-        const res = await fetch('/qian/export/filtered', { 
-            method:'POST', 
-            headers:{'Content-Type':'application/json'}, 
-            body:JSON.stringify(f) 
-        });
-        const d = await res.json();
-        if (d.success !== false) {
-            $('#statsArea').style.display = 'grid';
-            $('#totalRecords').textContent = d.total_records;
-            $('#totalIncome').textContent = formatMoney(d.total_income);
-            $('#totalExpense').textContent = Math.round(d.total_expense);
-            
-            const bal = d.balance;
-            const be = $('#balance');
-            be.textContent = formatMoney(bal);
-            be.style.color = bal >= 0 ? '#d32f2f' : '#388e3c';
-            
-            showInfo(['年：' + (f.year || '全部'), 
-                      '月：' + (f.month || '全部'), 
-                      f.categories.length ? f.categories.join(',') : '全部分类'].join(' · '));
-        }
-    } catch { 
-        alert('预览失败'); 
-    }
-}
-
-const showInfo = msg => { 
-    const el = $('#filterInfo'); 
-    el.textContent = msg; 
-    el.style.display = 'block'; 
-    setTimeout(() => el.style.display = 'none', 5000); 
-};
-
-const resetFilters = () => {
-    ['year','month','money_type','keyword'].forEach(id => $('#'+id).value = '');
+function resetFilters() {
+    $('#year').value = '';
+    $('#month').value = '';
+    $('#money_type').value = '';
+    $('#keyword').value = '';
     $('#show_special').value = 'true';
     $$('.category-checkbox').forEach(cb => cb.checked = false);
     $('#statsArea').style.display = 'none';
     $('#filterInfo').style.display = 'none';
-};
+}
 </script>
 {% endblock %}
