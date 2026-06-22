@@ -12,7 +12,6 @@
             <div class="quick-tags" id="tagList"></div>
         </div>
 
-        <div id="tips">1，抗阻力训练欲望: 0=完全没想法，身体都不想动 ,1= 大脑有一点点想法，但身体轻微抗拒，最终没行动, 2= 可以动几下，做点低强度的训练, 3= 可以来一次正式的训练，比如深蹲之类的, 4= 感觉自己无敌   2，体重结算是睡前，如果睡前已经是次日凌晨了那这个体重也记录在当天</div>
 
         <div class="form-grid">
             <input type="date" id="recordDate" value="{{ today }}" class="compact-input date-input">
@@ -81,9 +80,7 @@
 .tooltip{display:none;position:absolute;background:rgba(0,0,0,.75);color:#fff;padding:4px 10px;border-radius:4px;font-size:12px;pointer-events:none;white-space:nowrap;z-index:10}
 .data-point{cursor:pointer;fill:var(--primary-color)}
 .data-point.active{fill:#e74c3c}
-.quick-tags{margin-top: 5px;}
-/* tips 默认样式 */
-#tips{font-size:11px;color:#999;background:#fafafa;border-left:3px solid #e0e0e0;padding:6px 10px;margin-bottom:10px;line-height:1.5;border-radius:0 4px 4px 0;margin-top: 10px;}
+.quick-tags{margin: 5px;}
 
 /* 黑暗模式 - 每个 class/id 单独一行 */
 body.dark-mode .chart-panel{background:#242424;border-color:#444}
@@ -95,7 +92,6 @@ body.dark-mode .detail-weight{color:#e0e0e0;border-color:#333}
 body.dark-mode .note-item{color:#ccc;border-color:#333}
 body.dark-mode .tag-btn{background:#333;color:#ccc;border-color:#555;margin-right: 5px;margin-bottom: 5px;}
 body.dark-mode .tag-btn:hover{background:#3a2a1a;border-color:#a0522d;color:#e0c8a0}
-body.dark-mode #tips{background:#2a2a2a;border-left-color:#444;color:#888}
 body.dark-mode .tags-group{border-left-color:#444}
 body.dark-mode .data-point{fill:#a0522d}
 body.dark-mode .data-point.active{fill:#e74c3c}
@@ -113,7 +109,7 @@ const today = '{{ today }}';
 let currentDate = today;
 
 const tagPresets = [
-    '70g生米+两个蛋白+一点盐->破壁米糊',
+    '70g生米+两个蛋白+400ml水->破壁米糊',
     '复合OTC VB(b1 3mg,b2 1.5mg,b6 0.2mg,烟酰胺10mg,泛酸钙1mg)',
     'OTC VC(100毫克)',
     'OTC B6(10毫克)',
@@ -130,10 +126,17 @@ const tagPresets = [
     '腹胀:2 - 很明显，小气球的感觉',
     '腹胀:3 - 大气球的感觉，非常的胀气',
 
-    '胆囊压力:0 - 感觉不到',
+    '胆囊压力:0 - 几乎感觉不到',
     '胆囊压力:1 - 感觉到有一点点压力或者闷胀',
     '胆囊压力:2 - 明显很感觉到，压力很大',
     '胆囊压力:3 - 让我感到痛了',
+
+    '纯水(不包含米糊)大约: 1L以下',
+    '纯水(不包含米糊)大约: 1L ~ 1.5L',
+    '纯水(不包含米糊)大约: 1.5L ~ 2L',
+    '纯水(不包含米糊)大约: 2L ~ 2.5L',
+
+
 ];
 
 const getTimeSlot = () => ['00:00 - 07:00','07:00 - 09:00','09:00 - 12:00','12:00 - 15:00','15:00 - 19:00','19:00 - 21:00','21:00 - 24:00'][[7,9,12,15,19,21,24].findIndex(t => new Date().getHours() < t)];
