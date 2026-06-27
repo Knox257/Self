@@ -154,6 +154,10 @@ def tizhong_data():
         records = list(reversed(records))
     conn.close()
     
+    # 删除最后一天的数据（因为数据不全）
+    if records:
+        records = records[:-1]
+    
     records_list = []
     for r in records:
         note_str = r['note'] or '[]'
@@ -170,6 +174,7 @@ def tizhong_data():
     return jsonify({
         'success': True,
         'situation': '身高170多一点，有多发胆囊息肉+慢性鼻窦炎以及可能还有其它我不知情的炎症。目标是增肌增重，希望体重能稳定在75kg，但胃口小吃不下，需要靠流食加餐，流食是成功的关键，预计要喝一生，所以安全性/经济合适/便捷性/可持续性都非常的重要。 玄学角度：己土身弱，喜火土，用神是火，忌金水木',
+        'tips':'关于每日的体重,都是睡前称的体重，比如说二号的凌晨才睡，睡前称的体重也会记录到一号里面去，所以某天的体重如果说有增加，也可能是因为次日凌晨又吃了一餐。',
         'export_info': {
             'export_time': get_china_time(),
             'data_range': '全部记录' if limit == '0' else f'最近{limit}条记录',
